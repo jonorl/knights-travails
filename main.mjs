@@ -14,8 +14,7 @@ let chessboard = [
   /*7*/ [0, 0, 0, 0, 0, 0, 0, 0]]
 
 function knightMoves(arr1, arr2){
-//   const knight = new HashMap();
-//   const startPoint = knight.set(arr1);
+  const knight = new HashMap();
   let nextPotentialMoveHorizontal = []
   let nextPotentialMoveVertical = []
   let potentialMove = []
@@ -52,7 +51,11 @@ function knightMoves(arr1, arr2){
         }
     }
   }
-  console.log(potentialMove)
+  potentialMove.forEach(element => {
+    console.log(element)
+    knight.set(element);
+  });
+  console.log(knight)
 }
 
-knightMoves([7,7])
+knightMoves([3,3])

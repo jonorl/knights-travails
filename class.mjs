@@ -177,14 +177,14 @@ class Node {
   
     // Takes a key and produces a hash code with it.
     hash(key) {
-      let hashCode = 0;
-  
-      const primeNumber = 31;
-      for (let i = 0; i < key.length; i++) {
-        hashCode = (primeNumber * hashCode + key.charCodeAt(i)) % this.capacity;
+        let hashCode = 0;
+        if (Array.isArray(key)){
+          key = String(key[0] + key[1]);
+        }
+        const primeNumber = 31;
+          hashCode = (primeNumber * hashCode + key.charCodeAt(0)) % this.capacity;
+        return hashCode;
       }
-      return hashCode;
-    }
   
     // takes two arguments: the first is a key, and the second is a value that is assigned to this key.
     // If a key already exists, then the old value is overwritten, and we can say that we update the key’s value.
