@@ -280,15 +280,16 @@ class Node {
   
     // Takes a key as an argument and returns true or false based on whether or not the key is in the hash map.
     has(key) {
-      if (this.bucket[this.hash(key)].header === undefined) return false;
-      let nodeLoop = this.bucket[this.hash(key)].header;
-      while (nodeLoop !== null) {
-        if (nodeLoop.key === key) {
-          return true;
-        } else nodeLoop = nodeLoop.nextNode;
+        if (this.bucket[this.hash(key)].header === undefined) return false;
+        let nodeLoop = this.bucket[this.hash(key)].header;
+        while (nodeLoop !== null) {
+          if (JSON.stringify(nodeLoop.key) === JSON.stringify(key)) {
+            return true;
+          } else {
+            nodeLoop = nodeLoop.nextNode;}
+        }
+        return false;
       }
-      return false;
-    }
   
     // Takes a key as an argument. If the given key is in the hash map, it should remove the entry with that key and return true.
     // If the key isn’t in the hash map, it should return false.

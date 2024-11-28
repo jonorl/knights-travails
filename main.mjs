@@ -52,9 +52,9 @@ function knightMoves(arr1, arr2){
     }
   }
   potentialMove.forEach(element => {
-    console.log(element)
     knight.set(element);
   });
+  console.log(knight.has([2, 1]))
   console.log(knight)
 }
 
