@@ -1,18 +1,6 @@
 // Imports
 
-import { HashMap } from "./class.mjs";
-
-let chessboard = [
-      // 0  1  2  3  4  5  6  7
-  /*0*/ [0, 0, 0, 0, 0, 0, 0, 0],
-  /*1*/ [0, 0, 0, 0, 0, 0, 0, 0],
-  /*2*/ [0, 0, 0, 0, 0, 0, 0, 0],
-  /*3*/ [0, 0, 0, 0, 0, 0, 0, 0],
-  /*4*/ [0, 0, 0, 0, 0, 0, 0, 0],
-  /*5*/ [0, 0, 0, 0, 0, 0, 0, 0],
-  /*6*/ [0, 0, 0, 0, 0, 0, 0, 0],
-  /*7*/ [0, 0, 0, 0, 0, 0, 0, 0],
-];
+import { Graph } from "./class.mjs";
 
 let queue = [];
 let visitedQueue = new Set([]);
@@ -26,7 +14,7 @@ function knightMoves(arr1, arr2) {
   // check if the target value is in the queue
   queue.forEach((move) => {
     if (JSON.stringify(move) === JSON.stringify(arr2)) {
-      console.log(visitedQueue)
+      console.log(visitedQueue);
       return true;
     }
   });
@@ -126,4 +114,38 @@ function lookForNextMoves(arr1) {
   return potentialMove;
 }
 // console.log(visitedQueue)
-knightMoves([3, 3], [4, 3]);
+
+
+
+let chessboard = [
+  //   0  1  2  3  4  5  6  7
+  /*0*/ [0, 0, 0, 0, 0, 0, 0, 0],
+  /*1*/ [0, 0, 0, 0, 0, 0, 0, 0],
+  /*2*/ [0, 0, 0, 0, 0, 0, 0, 0],
+  /*3*/ [0, 0, 0, 0, 0, 0, 0, 0],
+  /*4*/ [0, 0, 0, 0, 0, 0, 0, 0],
+  /*5*/ [0, 0, 0, 0, 0, 0, 0, 0],
+  /*6*/ [0, 0, 0, 0, 0, 0, 0, 0],
+  /*7*/ [0, 0, 0, 0, 0, 0, 0, 0],
+];
+
+// knightMoves([3, 3], [4, 3]);
+
+function knightMovesV2(arr1, arr2) {
+  let vertices = lookForNextMoves(arr1);
+  let chessboardGraph = new Graph(vertices.length);
+
+  // adding vertices
+  for (let i = 0; i < vertices.length; i++) {
+    chessboardGraph.addVertex(vertices[i]);
+  }
+  // adding edges
+  vertices.forEach((move) => {
+    chessboardGraph.addEdge(move,lookForNextMoves(move));
+  });
+  // Prints the graph
+  chessboardGraph.printGraph();
+  // chessboardGraph.bfs(vertices, arr1)
+}
+
+knightMovesV2([3, 3], [4, 3]);
