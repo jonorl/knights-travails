@@ -132,25 +132,15 @@ let chessboard = [
 function knightMovesV2(arr1, arr2) {
   let vertices = lookForNextMoves(arr1);
   let chessboardGraph = new Graph(vertices.length);
-  let trigger = false;
-  while (trigger === false) {
-    for (let i = 0; i < vertices.length; i++) {
-      console.log(vertices[i]);
-      if (JSON.stringify(vertices[i]) === JSON.stringify(arr2)) {
-        trigger = true;
-      }
-      // adding vertices
-      chessboardGraph.addVertex(vertices[i]);
-    }
-    // adding edges
-    vertices.forEach((move) => {
-      chessboardGraph.addEdge(move, lookForNextMoves(move));
-    });
-  }
+  chessboardGraph.addVertex(arr1);
+  vertices.forEach((move) => {
+    chessboardGraph.addEdge(arr1, move);
+  });
 
-  // Prints the graph
+  chessboardGraph.breadthFirstSearch(chessboardGraph.AdjList.get(JSON.stringify(arr1)), arr2)
   chessboardGraph.printGraph();
-  // chessboardGraph.bfs(vertices, arr1)
+  // console.log(chessboardGraph.AdjList.get(JSON.stringify(arr1))[0])
+  
 }
 
 knightMovesV2([3, 3], [4, 3]);

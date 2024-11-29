@@ -473,43 +473,20 @@ export class Graph {
       console.log(i + " -> " + conc);
     }
   }
-  breadthFirstSearch(array) {
-    const queue = [this];
-    while (queue.length > 0) {
-      const current = queue.shift();
-      array.push(current.value);
-      current.forEach((child) => {
-        queue.push(child);
-      });
+  breadthFirstSearch(array, arr2) {
+    let traversingArray = [];
+    let queue = [array];
+    while (queue.length !== 0) {
+        traversingArray.push(queue[0])
+      queue.shift();
     }
-  }
-
-  // BFS from given source s
-  bfs(adj, s) {
-    const visited = Array(s).fill(false);
-    const queue = [];
-
-    // Mark the source node as visited
-    // and enqueue it
-    visited[s] = true;
-    queue.push(s);
-
-    // Iterate over the queue
-    while (queue.length) {
-      // Dequeue a vertex from queue and print it
-      const curr = queue.shift();
-      process.stdout.write(curr + " ");
-
-      // Get all adjacent vertices of the dequeued
-      // vertex. If an adjacent has not been visited,
-      // mark it visited and enqueue it
-      for (const x of adj[curr]) {
-        if (!visited[x]) {
-          visited[x] = true;
-          queue.push(x);
-        }
-      }
-    }
+    let boolResult = traversingArray.some(element => JSON.stringify(arr2) === JSON.stringify(element));
+    if(boolResult === true){
+      return traversingArray
+    } 
+    // else traversingArray.forEach((move) => {
+    //   this.addEdge(array, move);
+    // });
   }
 }
 
