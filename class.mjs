@@ -442,7 +442,7 @@ export class Graph {
   addVertex(v) {
     // initialize the adjacent list with a
     // null array
-    v = JSON.stringify(v);
+    // v = JSON.stringify(v).trim();
     this.AdjList.set(v, []);
   }
 
@@ -450,7 +450,7 @@ export class Graph {
   addEdge(v, w) {
     // get the list for vertex v and put the
     // vertex w denoting edge between v and w
-    v = JSON.stringify(v);
+    // v = JSON.stringify(v).trim();
     this.AdjList.get(v).push(w);
   }
 
@@ -472,21 +472,6 @@ export class Graph {
       // print the vertex and its adjacency list
       console.log(i + " -> " + conc);
     }
-  }
-  breadthFirstSearch(array, arr2) {
-    let traversingArray = [];
-    let queue = [array];
-    while (queue.length !== 0) {
-        traversingArray.push(queue[0])
-      queue.shift();
-    }
-    let boolResult = traversingArray.some(element => JSON.stringify(arr2) === JSON.stringify(element));
-    if(boolResult === true){
-      return traversingArray
-    } 
-    // else traversingArray.forEach((move) => {
-    //   this.addEdge(array, move);
-    // });
   }
 }
 

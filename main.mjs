@@ -38,7 +38,7 @@ function lookForNextMoves(arr1) {
       nextPotentialMoveHorizontal.push(1, 2);
       break;
     case 1:
-      nextPotentialMoveHorizontal.push(0, 1, 2);
+      nextPotentialMoveHorizontal.push(0, 2, 3);
       break;
     case 2:
       nextPotentialMoveHorizontal.push(0, 1, 3, 4);
@@ -65,7 +65,7 @@ function lookForNextMoves(arr1) {
       nextPotentialMoveVertical.push(1, 2);
       break;
     case 1:
-      nextPotentialMoveVertical.push(0, 1, 2);
+      nextPotentialMoveVertical.push(0, 2, 3);
       break;
     case 2:
       nextPotentialMoveVertical.push(0, 1, 3, 4);
@@ -95,28 +95,18 @@ function lookForNextMoves(arr1) {
         (Math.abs((nextPotentialMoveHorizontal[i] - arr1[0]) % 3) === 2 &&
           Math.abs((nextPotentialMoveVertical[j] - arr1[1]) % 3) === 1)
       ) {
-        if (
-          !visitedQueue.has(
-            JSON.stringify([
-              nextPotentialMoveHorizontal[i],
-              nextPotentialMoveVertical[j],
-            ])
-          )
-        ) {
-          potentialMove.push([
-            nextPotentialMoveHorizontal[i],
-            nextPotentialMoveVertical[j],
-          ]);
-        }
+        potentialMove.push([
+          nextPotentialMoveHorizontal[i],
+          nextPotentialMoveVertical[j],
+        ]);
       }
     }
   }
   return potentialMove;
 }
-// console.log(visitedQueue)
 
 let chessboard = [
-  //   0  1  2  3  4  5  6  7
+  //     0  1  2  3  4  5  6  7
   /*0*/ [0, 0, 0, 0, 0, 0, 0, 0],
   /*1*/ [0, 0, 0, 0, 0, 0, 0, 0],
   /*2*/ [0, 0, 0, 0, 0, 0, 0, 0],
@@ -129,6 +119,70 @@ let chessboard = [
 
 // knightMoves([3, 3], [4, 3]);
 
+function createNodes() {
+  let chessboardX = [0, 1, 2, 3, 4, 5, 6, 7];
+  let chessboardY = [0, 1, 2, 3, 4, 5, 6, 7];
+  let edges = [];
+  let coordinates = [];
+  chessboardX.forEach((moveX) => {
+    chessboardY.forEach((moveY) => {
+      coordinates.push([moveX, moveY]);
+      edges.push(lookForNextMoves(coordinates));
+    });
+  });
+  let coordinatesString;
+
+  coordinates.forEach((coordinate) => {
+    coordinate = coordinate[0].toString() + coordinate[1].toString() + ", ";
+    coordinatesString += coordinate;
+  });
+  coordinatesString = coordinatesString.slice(9);
+  coordinatesString = coordinatesString.slice(0, -2);
+  let coordinatesSplit = coordinatesString.split(", ");
+  let chessboardGraph = new Graph(coordinates.length);
+  for (let i = 0; i < coordinatesSplit.length; i++) {
+    chessboardGraph.addVertex(coordinatesSplit[i]);
+  }
+
+  coordinates.forEach((coordinate) => {
+    chessboardGraph.addEdge(
+      coordinate.toString().replace(",", ""),
+      lookForNextMoves(coordinate)
+    );
+  });
+  chessboardGraph.printGraph();
+
+  return chessboardGraph;
+}
+
+function bfs(start, end) {
+
+  let myGraph = createNodes();
+  const visited = new Set();
+
+  const queue = [start];
+  let counter = 0
+  let add = 0
+
+  while (queue.length > 0) {
+
+
+    const nextInQueue = queue.shift();
+    let nextMoves = myGraph.AdjList.get(nextInQueue)
+    for (const nextMove of nextMoves){
+      queue.push(nextMove)
+
+      if (nextMove === end){
+        console.log("found it!")
+      }
+      if (!visited.has(nextMove)){
+        visited.add(nextMove);
+        queue.push(nextMove)
+      }
+    }
+  }
+}
+
 function knightMovesV2(arr1, arr2) {
   let vertices = lookForNextMoves(arr1);
   let chessboardGraph = new Graph(vertices.length);
@@ -137,10 +191,14 @@ function knightMovesV2(arr1, arr2) {
     chessboardGraph.addEdge(arr1, move);
   });
 
-  chessboardGraph.breadthFirstSearch(chessboardGraph.AdjList.get(JSON.stringify(arr1)), arr2)
+  chessboardGraph.breadthFirstSearch(
+    chessboardGraph.AdjList.get(JSON.stringify(arr1)),
+    arr2
+  );
   chessboardGraph.printGraph();
   // console.log(chessboardGraph.AdjList.get(JSON.stringify(arr1))[0])
-  
 }
 
-knightMovesV2([3, 3], [4, 3]);
+// knightMovesV2([3, 3], [4, 3]);
+
+bfs("33", [5, 4]);
