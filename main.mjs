@@ -150,6 +150,8 @@ function createNodes() {
       lookForNextMoves(coordinate)
     );
   });
+
+
   chessboardGraph.printGraph();
 
   return chessboardGraph;
@@ -161,23 +163,23 @@ function bfs(start, end) {
   const visited = new Set();
 
   const queue = [start];
-  let counter = 0
-  let add = 0
 
   while (queue.length > 0) {
-
 
     const nextInQueue = queue.shift();
     let nextMoves = myGraph.AdjList.get(nextInQueue)
     for (const nextMove of nextMoves){
+
       queue.push(nextMove)
 
-      if (nextMove === end){
+      if (JSON.stringify(nextMove).includes(end)){
         console.log("found it!")
+        return "found it!"
       }
       if (!visited.has(nextMove)){
         visited.add(nextMove);
         queue.push(nextMove)
+        console.log(nextMove)
       }
     }
   }
@@ -201,4 +203,4 @@ function knightMovesV2(arr1, arr2) {
 
 // knightMovesV2([3, 3], [4, 3]);
 
-bfs("33", [5, 4]);
+bfs("33", [3, 4]);
