@@ -2,33 +2,6 @@
 
 import { Graph } from "./class.mjs";
 
-let queue = [];
-let visitedQueue = new Set([]);
-
-function knightMoves(arr1, arr2) {
-  visitedQueue.add(JSON.stringify(arr1));
-  // put the next moves in the queue
-  queue = lookForNextMoves(arr1);
-  // duplicate the queue
-  let nextMoveQueue = queue;
-  // check if the target value is in the queue
-  queue.forEach((move) => {
-    if (JSON.stringify(move) === JSON.stringify(arr2)) {
-      console.log(visitedQueue);
-      return true;
-    }
-  });
-  queue = [];
-  // Compare the nextMoveQueue against the set and remove values if any:
-  nextMoveQueue = nextMoveQueue.filter(
-    (item) => !visitedQueue.has(JSON.stringify(item))
-  );
-  // On the queue clone, look for next moves and put them back in the queue starting all over recursively
-  nextMoveQueue.forEach((move) => {
-    knightMoves(move, arr2);
-  });
-}
-
 function lookForNextMoves(arr1) {
   let nextPotentialMoveHorizontal = [];
   let nextPotentialMoveVertical = [];
@@ -117,8 +90,6 @@ let chessboard = [
   /*7*/ [0, 0, 0, 0, 0, 0, 0, 0],
 ];
 
-// knightMoves([3, 3], [4, 3]);
-
 function createNodes() {
   let chessboardX = [0, 1, 2, 3, 4, 5, 6, 7];
   let chessboardY = [0, 1, 2, 3, 4, 5, 6, 7];
@@ -183,23 +154,5 @@ function bfs(start, end) {
     }
   }
 }
-
-function knightMovesV2(arr1, arr2) {
-  let vertices = lookForNextMoves(arr1);
-  let chessboardGraph = new Graph(vertices.length);
-  chessboardGraph.addVertex(arr1);
-  vertices.forEach((move) => {
-    chessboardGraph.addEdge(arr1, move);
-  });
-
-  chessboardGraph.breadthFirstSearch(
-    chessboardGraph.AdjList.get(JSON.stringify(arr1)),
-    arr2
-  );
-  chessboardGraph.printGraph();
-  // console.log(chessboardGraph.AdjList.get(JSON.stringify(arr1))[0])
-}
-
-// knightMovesV2([3, 3], [4, 3]);
 
 bfs("33", [3, 4]);
