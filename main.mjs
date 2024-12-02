@@ -150,9 +150,7 @@ function createNodes() {
       lookForNextMoves(coordinate)
     );
   });
-
-
-  chessboardGraph.printGraph();
+  // chessboardGraph.printGraph();
 
   return chessboardGraph;
 }
@@ -168,6 +166,7 @@ function bfs(start, end) {
 
     const nextInQueue = queue.shift();
     let nextMoves = myGraph.AdjList.get(nextInQueue)
+    console.log(nextMoves)
     for (const nextMove of nextMoves){
 
       queue.push(nextMove)

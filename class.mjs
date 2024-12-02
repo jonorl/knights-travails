@@ -440,17 +440,11 @@ export class Graph {
   }
   // methods
   addVertex(v) {
-    // initialize the adjacent list with a
-    // null array
-    // v = JSON.stringify(v).trim();
     this.AdjList.set(v, []);
   }
 
   // add edge to the graph
   addEdge(v, w) {
-    // get the list for vertex v and put the
-    // vertex w denoting edge between v and w
-    // v = JSON.stringify(v).trim();
     this.AdjList.get(v).push(w);
   }
 
@@ -460,16 +454,9 @@ export class Graph {
 
     // iterate over the vertices
     for (let i of get_keys) {
-      // get the corresponding adjacency list
-      // for the vertex
       let get_values = this.AdjList.get(i);
       let conc = "";
-
-      // iterate over the adjacency list
-      // concatenate the values into a string
       for (let j of get_values) conc += j + " ";
-
-      // print the vertex and its adjacency list
       console.log(i + " -> " + conc);
     }
   }
