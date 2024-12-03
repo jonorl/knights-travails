@@ -2,6 +2,33 @@
 
 import { AdjListNode, Graph } from "./class.mjs";
 
+// variables
+
+let chessboard = [
+  //     0  1  2  3  4  5  6  7
+  /*0*/ [0, 0, 0, 0, 0, 0, 0, 0],
+  /*1*/ [0, 0, 0, 0, 0, 0, 0, 0],
+  /*2*/ [0, 0, 0, 0, 0, 0, 0, 0],
+  /*3*/ [0, 0, 0, 0, 0, 0, 0, 0],
+  /*4*/ [0, 0, 0, 0, 0, 0, 0, 0],
+  /*5*/ [0, 0, 0, 0, 0, 0, 0, 0],
+  /*6*/ [0, 0, 0, 0, 0, 0, 0, 0],
+  /*7*/ [0, 0, 0, 0, 0, 0, 0, 0],
+];
+
+let graphKeys;
+let graphEdges;
+let graph = [];
+const V = 64;
+let counter = 0;
+let verticesObj = {};
+let distance;
+let destination;
+let source = 63;
+let pathTravelled = [];
+
+// auxiliary functions
+
 function lookForNextMoves(arr1) {
   let nextPotentialMoveHorizontal = [];
   let nextPotentialMoveVertical = [];
@@ -78,26 +105,6 @@ function lookForNextMoves(arr1) {
   return potentialMove;
 }
 
-let chessboard = [
-  //     0  1  2  3  4  5  6  7
-  /*0*/ [0, 0, 0, 0, 0, 0, 0, 0],
-  /*1*/ [0, 0, 0, 0, 0, 0, 0, 0],
-  /*2*/ [0, 0, 0, 0, 0, 0, 0, 0],
-  /*3*/ [0, 0, 0, 0, 0, 0, 0, 0],
-  /*4*/ [0, 0, 0, 0, 0, 0, 0, 0],
-  /*5*/ [0, 0, 0, 0, 0, 0, 0, 0],
-  /*6*/ [0, 0, 0, 0, 0, 0, 0, 0],
-  /*7*/ [0, 0, 0, 0, 0, 0, 0, 0],
-];
-
-let graphKeys;
-let graphEdges;
-let graph = [];
-const V = 64;
-let counter = 0;
-let verticesObj = {};
-let source = 63;
-
 function createNodes() {
   let chessboardX = [0, 1, 2, 3, 4, 5, 6, 7];
   let chessboardY = [0, 1, 2, 3, 4, 5, 6, 7];
@@ -135,7 +142,7 @@ function createNodes() {
   for (let i = 0; i < V; i++) {
     graph.push([]);
   }
-  
+
   for (let i = 0; i < V; i++) {
     for (let j = 0; j < graphEdges[i][0].length; j++) {
       let tmpStr = graphEdges[i][0][j].toString().replace(",", "");
@@ -149,13 +156,15 @@ function createNodes() {
     verticesObj[counter] = element;
     counter++;
   });
+  distance = dijkstra(V, graph, source);
 
   return chessboardGraph;
 }
 
-function dijkstra(V, graph, source) {
+function dijkstra(V, graph, source, destination) {
   const distance = new Array(V).fill(Infinity);
   const visited = new Array(V).fill(false);
+  const previous = new Array(V).fill(null);
 
   distance[source] = 0;
 
@@ -175,11 +184,29 @@ function dijkstra(V, graph, source) {
         distance[u] + v.weight < distance[vertexIndex]
       ) {
         distance[vertexIndex] = distance[u] + v.weight;
+        previous[vertexIndex] = u;
       }
     }
   }
 
-  return distance;
+  function reconstructPath(previous) {
+    const path = [];
+    let current = destination;
+
+    // Trace back from destination to source
+    while (current !== null) {
+      path.unshift(graphKeys[current]);
+      current = previous[current];
+    }
+
+    return path;
+  }
+  if (destination !== undefined) {
+    const path = reconstructPath(previous);
+    pathTravelled.push(path);
+    return { distance, path };
+  }
+  return distance
 }
 
 function getMinDistanceVertex(distance, visited) {
@@ -204,37 +231,35 @@ function formatVertexId(vertex) {
   return vertex.toString().padStart(2, "0");
 }
 
-createNodes();
-let distance = dijkstra(V, graph, source);
+function knightMoves(source, destination) {
+  let sourceStr = source.toString().replace(",", "");
+  let destinationStr = destination.toString().replace(",", "");
 
-// console.log("Vertex Distance from Source");
-// for (let i = 0; i < V; i++) {
-//   console.log(
-//     "Index: " + [i] + " \t\t " + graphKeys[i] + " \t\t " + distance[i]
-//   );
-// }
-
-function knightMoves (source, destination){
-  let sourceStr = source.toString().replace(",", "")
-  let destinationStr = destination.toString().replace(",", "")
   let sourceKey;
   let destinationKey;
 
-
+  // Find the source and destination in verticesObj
   for (const [key, val] of Object.entries(verticesObj)) {
-    if (val === sourceStr) {
-      sourceKey = key;
-    }
+    if (val === sourceStr) sourceKey = Number(key);
+    if (val === destinationStr) destinationKey = Number(key);
   }
 
-  for (const [key, val] of Object.entries(verticesObj)) {
-    if (val === destinationStr) {
-      destinationKey = key;
-    }
-  }
-  sourceStr = sourceKey;
-  dijkstra(V, graph, sourceStr)
-  console.log(`To get from ${source} to ${destination} it requires a minimum of: `,  distance[destinationKey], ` moves`)
+  // Ensure graph nodes are correctly mapped
+  const { distance, path } = dijkstra(V, graph, sourceKey, destinationKey);
+
+  // Convert path to coordinates
+  const moves = path.map(vertex => {
+    const x = Number(vertex[0]);
+    const y = Number(vertex[1]);
+    return [x, y];
+  });
+
+  // console.log(`Path from ${source} to ${destination}:`, moves);
+  console.log(`You made it in: ${distance[destinationKey]} moves! Here's your path:`);
+  console.log(moves)
 }
 
-knightMoves([3,3], [4,3])
+
+createNodes();
+
+knightMoves([3, 3], [4, 3]);
