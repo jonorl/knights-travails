@@ -159,36 +159,37 @@ function bfs(start, end) {
 createNodes();
 
 function dijkstra(V, graph, source) {
-  let distance = [];
-  let visited = [];
-
-  for (let i = 0; i < V; i++) {
-    distance.push(Infinity);
-    visited.push(false);
-  }
-
+  // Initialize distances and visited array
+  const distance = new Array(V).fill(Infinity);
+  const visited = new Array(V).fill(false);
+  
+  // Set source distance to 0
   distance[source] = 0;
 
-  for (let i = 0; i < V - 1; i++) {
-    let u = getMinDistanceVertex(distance, visited);
-    visited[u] = true;
+  // Find shortest path for all vertices
+  for (let count = 0; count < V - 1; count++) {
+    // Pick the minimum distance vertex from the set of unvisited vertices
+    const u = getMinDistanceVertex(distance, visited);
     
+    // Mark the picked vertex as visited
+    visited[u] = true;
 
-    for (let j = 0; j < graph[u].length; j++) {
-      let v = parseInt(graph[u][j].dest);
-      console.log(v)
-      let weight = graph[u][j].weight;
-      if (
-        !visited[v] &&
-        distance[u] !== Infinity &&
-        distance[u] + weight < distance[v]
-      ) {
-        distance[v] = distance[u] + weight;
+    // Update distance value of adjacent vertices
+    for (let v of graph[u]) {
+      // Find the vertex index in the graph
+      const vertexIndex = graphKeys.findIndex(key => 
+        formatVertexId(key) === formatVertexId(v.dest)
+      );
+
+      // Only consider if not visited and can improve path
+      if (!visited[vertexIndex] && 
+          distance[u] !== Infinity && 
+          distance[u] + v.weight < distance[vertexIndex]) {
+        distance[vertexIndex] = distance[u] + v.weight;
       }
     }
   }
 
-  // distance[target]
   return distance;
 }
 
@@ -205,6 +206,17 @@ function getMinDistanceVertex(distance, visited) {
 
   return minIndex;
 }
+
+function formatVertexId(vertex) {
+  // If vertex is an array, convert to string
+  if (Array.isArray(vertex)) {
+    vertex = vertex.join('');
+  }
+  
+  // Ensure 2-digit representation
+  return vertex.toString().padStart(2, '0');
+}
+
 const V = 64;
 let graph = [];
 
@@ -212,19 +224,31 @@ for (let i = 0; i < V; i++) {
   graph.push([]);
 }
 
-let source = 27;
+let source = 63;
 
 for (let i = 0; i < V; i++) {
     for (let j = 0; j < graphEdges[i][0].length; j++) {
-      graph[i].push(new AdjListNode(graphEdges[i][0][j].toString().replace(",", "")));
+      // let tmpStr = new AdjListNode(graphEdges[i][0][j].toString().replace(",", ""))
+      let tmpStr = graphEdges[i][0][j].toString().replace(",", "")
+      tmpStr = tmpStr.toString();
+      tmpStr = tmpStr.padStart(2, "0");
+      // console.log(tmpStr)
+      graph[i].push(new AdjListNode(formatVertexId(graphEdges[i][0][j])));
     }
 }
-console.log(graph[27])
+console.log(graph[11])
+let counter = 0
+let verticesObj = {}
+graphKeys.forEach(element => {
+  verticesObj[counter] = element;
+  counter++;
+});
+
 
 
 let distance = dijkstra(V, graph, source);
 // Printing the Output
 console.log("Vertex Distance from Source");
 for (let i = 0; i < V; i++) {
-  console.log([i] + " \t\t " + graphKeys[i] + " \t\t " + distance[i]);
+  console.log("Index: " + [i] + " \t\t " + graphKeys[i] + " \t\t " + distance[i]);
 }
