@@ -175,7 +175,8 @@ function dijkstra(V, graph, source) {
     
 
     for (let j = 0; j < graph[u].length; j++) {
-      let v = graph[u][j].dest;
+      let v = parseInt(graph[u][j].dest);
+      console.log(v)
       let weight = graph[u][j].weight;
       if (
         !visited[v] &&
@@ -218,6 +219,7 @@ for (let i = 0; i < V; i++) {
       graph[i].push(new AdjListNode(graphEdges[i][0][j].toString().replace(",", "")));
     }
 }
+console.log(graph[27])
 
 
 let distance = dijkstra(V, graph, source);
