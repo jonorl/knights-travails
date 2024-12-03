@@ -1,3 +1,7 @@
+// Imports
+
+import { createNodes } from "./main.mjs";
+
 // constructor classes
 
 // Creates a node that's composed of a value and a pointer to its next node.
@@ -462,33 +466,17 @@ export class Graph {
   }
 }
 
-class Queue {
-  constructor() {
-    this.items = {};
-    this.frontIndex = 0;
-    this.backIndex = 0;
+// javascript program for Dijkstra's
+// shortest path algorithm for adjacency
+// list representation of graph
+
+
+// A structure to represent a
+// node in adjacency list
+export class AdjListNode {
+  constructor(dest) {
+    this.dest = dest;
+    this.weight = 1;
   }
-  enqueue(item) {
-    this.items[this.backIndex] = item;
-    this.backIndex++;
-    return item + " inserted";
   }
-  dequeue() {
-    const item = this.items[this.frontIndex];
-    delete this.items[this.frontIndex];
-    this.frontIndex++;
-    return item;
-  }
-  peek() {
-    return this.items[this.frontIndex];
-  }
-  isEmpty() {
-    // return true if the queue is empty.
-    return this.items.length == 0;
-  }
-  printQueue() {
-    let str = "";
-    for (var i = 0; i < this.items.length; i++) str += this.items[i] + " ";
-    return str;
-  }
-}
+ 

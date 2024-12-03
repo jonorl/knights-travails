@@ -1,6 +1,6 @@
 // Imports
 
-import { Graph } from "./class.mjs";
+import { AdjListNode, Graph } from "./class.mjs";
 
 function lookForNextMoves(arr1) {
   let nextPotentialMoveHorizontal = [];
@@ -90,7 +90,10 @@ let chessboard = [
   /*7*/ [0, 0, 0, 0, 0, 0, 0, 0],
 ];
 
-function createNodes() {
+let graphKeys;
+let graphEdges;
+
+export function createNodes() {
   let chessboardX = [0, 1, 2, 3, 4, 5, 6, 7];
   let chessboardY = [0, 1, 2, 3, 4, 5, 6, 7];
   let edges = [];
@@ -121,38 +124,105 @@ function createNodes() {
       lookForNextMoves(coordinate)
     );
   });
-  // chessboardGraph.printGraph();
+  graphKeys = Array.from(chessboardGraph.AdjList.keys());
+  graphEdges = Array.from(chessboardGraph.AdjList.values());
 
   return chessboardGraph;
 }
 
 function bfs(start, end) {
-
   let myGraph = createNodes();
   const visited = new Set();
 
   const queue = [start];
 
   while (queue.length > 0) {
-
     const nextInQueue = queue.shift();
-    let nextMoves = myGraph.AdjList.get(nextInQueue)
-    console.log(nextMoves)
-    for (const nextMove of nextMoves){
+    let nextMoves = myGraph.AdjList.get(nextInQueue);
+    console.log(nextMoves);
+    for (const nextMove of nextMoves) {
+      queue.push(nextMove);
 
-      queue.push(nextMove)
-
-      if (JSON.stringify(nextMove).includes(end)){
-        console.log("found it!")
-        return "found it!"
+      if (JSON.stringify(nextMove).includes(end)) {
+        console.log("found it!");
+        return "found it!";
       }
-      if (!visited.has(nextMove)){
+      if (!visited.has(nextMove)) {
         visited.add(nextMove);
-        queue.push(nextMove)
-        console.log(nextMove)
+        queue.push(nextMove);
+        console.log(nextMove);
       }
     }
   }
 }
 
-bfs("33", [3, 4]);
+createNodes();
+
+function dijkstra(V, graph, source) {
+  let distance = [];
+  let visited = [];
+
+  for (let i = 0; i < V; i++) {
+    distance.push(Infinity);
+    visited.push(false);
+  }
+
+  distance[source] = 0;
+
+  for (let i = 0; i < V - 1; i++) {
+    let u = getMinDistanceVertex(distance, visited);
+    visited[u] = true;
+    
+
+    for (let j = 0; j < graph[u].length; j++) {
+      let v = graph[u][j].dest;
+      let weight = graph[u][j].weight;
+      if (
+        !visited[v] &&
+        distance[u] !== Infinity &&
+        distance[u] + weight < distance[v]
+      ) {
+        distance[v] = distance[u] + weight;
+      }
+    }
+  }
+
+  // distance[target]
+  return distance;
+}
+
+function getMinDistanceVertex(distance, visited) {
+  let minDistance = Infinity;
+  let minIndex = -1;
+
+  for (let i = 0; i < distance.length; i++) {
+    if (!visited[i] && distance[i] <= minDistance) {
+      minDistance = distance[i];
+      minIndex = i;
+    }
+  }
+
+  return minIndex;
+}
+const V = 64;
+let graph = [];
+
+for (let i = 0; i < V; i++) {
+  graph.push([]);
+}
+
+let source = 27;
+
+for (let i = 0; i < V; i++) {
+    for (let j = 0; j < graphEdges[i][0].length; j++) {
+      graph[i].push(new AdjListNode(graphEdges[i][0][j].toString().replace(",", "")));
+    }
+}
+
+
+let distance = dijkstra(V, graph, source);
+// Printing the Output
+console.log("Vertex Distance from Source");
+for (let i = 0; i < V; i++) {
+  console.log([i] + " \t\t " + graphKeys[i] + " \t\t " + distance[i]);
+}
