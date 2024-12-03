@@ -92,8 +92,13 @@ let chessboard = [
 
 let graphKeys;
 let graphEdges;
+let graph = [];
+const V = 64;
+let counter = 0;
+let verticesObj = {};
+let source = 63;
 
-export function createNodes() {
+function createNodes() {
   let chessboardX = [0, 1, 2, 3, 4, 5, 6, 7];
   let chessboardY = [0, 1, 2, 3, 4, 5, 6, 7];
   let edges = [];
@@ -127,64 +132,48 @@ export function createNodes() {
   graphKeys = Array.from(chessboardGraph.AdjList.keys());
   graphEdges = Array.from(chessboardGraph.AdjList.values());
 
+  for (let i = 0; i < V; i++) {
+    graph.push([]);
+  }
+  
+  for (let i = 0; i < V; i++) {
+    for (let j = 0; j < graphEdges[i][0].length; j++) {
+      let tmpStr = graphEdges[i][0][j].toString().replace(",", "");
+      tmpStr = tmpStr.toString();
+      tmpStr = tmpStr.padStart(2, "0");
+      graph[i].push(new AdjListNode(formatVertexId(graphEdges[i][0][j])));
+    }
+  }
+
+  graphKeys.forEach((element) => {
+    verticesObj[counter] = element;
+    counter++;
+  });
+
   return chessboardGraph;
 }
 
-function bfs(start, end) {
-  let myGraph = createNodes();
-  const visited = new Set();
-
-  const queue = [start];
-
-  while (queue.length > 0) {
-    const nextInQueue = queue.shift();
-    let nextMoves = myGraph.AdjList.get(nextInQueue);
-    console.log(nextMoves);
-    for (const nextMove of nextMoves) {
-      queue.push(nextMove);
-
-      if (JSON.stringify(nextMove).includes(end)) {
-        console.log("found it!");
-        return "found it!";
-      }
-      if (!visited.has(nextMove)) {
-        visited.add(nextMove);
-        queue.push(nextMove);
-        console.log(nextMove);
-      }
-    }
-  }
-}
-
-createNodes();
-
 function dijkstra(V, graph, source) {
-  // Initialize distances and visited array
   const distance = new Array(V).fill(Infinity);
   const visited = new Array(V).fill(false);
-  
-  // Set source distance to 0
+
   distance[source] = 0;
 
-  // Find shortest path for all vertices
   for (let count = 0; count < V - 1; count++) {
-    // Pick the minimum distance vertex from the set of unvisited vertices
     const u = getMinDistanceVertex(distance, visited);
-    
-    // Mark the picked vertex as visited
+
     visited[u] = true;
 
-    // Update distance value of adjacent vertices
     for (let v of graph[u]) {
-      // Find the vertex index in the graph
-      const vertexIndex = graphKeys.findIndex(key => 
-        formatVertexId(key) === formatVertexId(v.dest)
+      const vertexIndex = graphKeys.findIndex(
+        (key) => formatVertexId(key) === formatVertexId(v.dest)
       );
 
-      // Only consider if not visited and can improve path
-      if (!visited[vertexIndex] && 
-          distance[u] !== Infinity && 
-          distance[u] + v.weight < distance[vertexIndex]) {
+      if (
+        !visited[vertexIndex] &&
+        distance[u] !== Infinity &&
+        distance[u] + v.weight < distance[vertexIndex]
+      ) {
         distance[vertexIndex] = distance[u] + v.weight;
       }
     }
@@ -208,47 +197,44 @@ function getMinDistanceVertex(distance, visited) {
 }
 
 function formatVertexId(vertex) {
-  // If vertex is an array, convert to string
   if (Array.isArray(vertex)) {
-    vertex = vertex.join('');
+    vertex = vertex.join("");
   }
-  
-  // Ensure 2-digit representation
-  return vertex.toString().padStart(2, '0');
+
+  return vertex.toString().padStart(2, "0");
 }
 
-const V = 64;
-let graph = [];
-
-for (let i = 0; i < V; i++) {
-  graph.push([]);
-}
-
-let source = 63;
-
-for (let i = 0; i < V; i++) {
-    for (let j = 0; j < graphEdges[i][0].length; j++) {
-      // let tmpStr = new AdjListNode(graphEdges[i][0][j].toString().replace(",", ""))
-      let tmpStr = graphEdges[i][0][j].toString().replace(",", "")
-      tmpStr = tmpStr.toString();
-      tmpStr = tmpStr.padStart(2, "0");
-      // console.log(tmpStr)
-      graph[i].push(new AdjListNode(formatVertexId(graphEdges[i][0][j])));
-    }
-}
-console.log(graph[11])
-let counter = 0
-let verticesObj = {}
-graphKeys.forEach(element => {
-  verticesObj[counter] = element;
-  counter++;
-});
-
-
-
+createNodes();
 let distance = dijkstra(V, graph, source);
-// Printing the Output
-console.log("Vertex Distance from Source");
-for (let i = 0; i < V; i++) {
-  console.log("Index: " + [i] + " \t\t " + graphKeys[i] + " \t\t " + distance[i]);
+
+// console.log("Vertex Distance from Source");
+// for (let i = 0; i < V; i++) {
+//   console.log(
+//     "Index: " + [i] + " \t\t " + graphKeys[i] + " \t\t " + distance[i]
+//   );
+// }
+
+function knightMoves (source, destination){
+  let sourceStr = source.toString().replace(",", "")
+  let destinationStr = destination.toString().replace(",", "")
+  let sourceKey;
+  let destinationKey;
+
+
+  for (const [key, val] of Object.entries(verticesObj)) {
+    if (val === sourceStr) {
+      sourceKey = key;
+    }
+  }
+
+  for (const [key, val] of Object.entries(verticesObj)) {
+    if (val === destinationStr) {
+      destinationKey = key;
+    }
+  }
+  sourceStr = sourceKey;
+  dijkstra(V, graph, sourceStr)
+  console.log(`To get from ${source} to ${destination} it requires a minimum of: `,  distance[destinationKey], ` moves`)
 }
+
+knightMoves([3,3], [4,3])
