@@ -2,30 +2,17 @@
 
 import { AdjListNode, Graph } from "./class.mjs";
 
-// variables
+// Variables
 
-let chessboard = [
-  //     0  1  2  3  4  5  6  7
-  /*0*/ [0, 0, 0, 0, 0, 0, 0, 0],
-  /*1*/ [0, 0, 0, 0, 0, 0, 0, 0],
-  /*2*/ [0, 0, 0, 0, 0, 0, 0, 0],
-  /*3*/ [0, 0, 0, 0, 0, 0, 0, 0],
-  /*4*/ [0, 0, 0, 0, 0, 0, 0, 0],
-  /*5*/ [0, 0, 0, 0, 0, 0, 0, 0],
-  /*6*/ [0, 0, 0, 0, 0, 0, 0, 0],
-  /*7*/ [0, 0, 0, 0, 0, 0, 0, 0],
-];
-
+let counter = 0;
+let distance;
+let graph = [];
 let graphKeys;
 let graphEdges;
-let graph = [];
-const V = 64;
-let counter = 0;
-let verticesObj = {};
-let distance;
-let destination;
-let source = 63;
 let pathTravelled = [];
+let source = 63;
+const V = 64;
+let verticesObj = {};
 
 // auxiliary functions
 
@@ -193,7 +180,6 @@ function dijkstra(V, graph, source, destination) {
     const path = [];
     let current = destination;
 
-    // Trace back from destination to source
     while (current !== null) {
       path.unshift(graphKeys[current]);
       current = previous[current];
@@ -206,7 +192,7 @@ function dijkstra(V, graph, source, destination) {
     pathTravelled.push(path);
     return { distance, path };
   }
-  return distance
+  return distance;
 }
 
 function getMinDistanceVertex(distance, visited) {
@@ -238,27 +224,24 @@ function knightMoves(source, destination) {
   let sourceKey;
   let destinationKey;
 
-  // Find the source and destination in verticesObj
   for (const [key, val] of Object.entries(verticesObj)) {
     if (val === sourceStr) sourceKey = Number(key);
     if (val === destinationStr) destinationKey = Number(key);
   }
 
-  // Ensure graph nodes are correctly mapped
   const { distance, path } = dijkstra(V, graph, sourceKey, destinationKey);
 
-  // Convert path to coordinates
-  const moves = path.map(vertex => {
+  const moves = path.map((vertex) => {
     const x = Number(vertex[0]);
     const y = Number(vertex[1]);
     return [x, y];
   });
 
-  // console.log(`Path from ${source} to ${destination}:`, moves);
-  console.log(`You made it in: ${distance[destinationKey]} moves! Here's your path:`);
-  console.log(moves)
+  console.log(
+    `You made it in: ${distance[destinationKey]} moves! Here's your path:`
+  );
+  console.log(moves);
 }
-
 
 createNodes();
 
